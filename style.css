@@ -1,0 +1,186 @@
+/* --- Globale Grundstyles --- */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* --- Header und Layout --- */
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: #0e1620;
+  border-bottom: 1px solid #16313e;
+  z-index: 5;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+}
+
+.search {
+  display: flex;
+  gap: .5rem;
+}
+
+.search input {
+  padding: .6rem .8rem;
+  border-radius: .6rem;
+  border: 1px solid #294759;
+  background: #0f2130;
+  color: var(--text);
+  min-width: 230px;
+}
+
+.search button {
+  background: var(--accent);
+  color: #0f1b22;
+  border: none;
+  border-radius: .6rem;
+  padding: .6rem 1rem;
+  cursor: pointer;
+}
+
+.search button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Grid Layout --- */
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .25);
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
+}
+
+.card__top {
+  height: 140px;
+  display: grid;
+  place-items: center;
+}
+
+.card__img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .45));
+}
+
+.card__body {
+  padding: .75rem 1rem;
+}
+
+.card__title {
+  display: flex;
+  justify-content: space-between;
+  gap: .5rem;
+  font-weight: 700;
+}
+
+.badges {
+  display: flex;
+  gap: .35rem;
+  flex-wrap: wrap;
+  margin-top: .35rem;
+}
+
+.badge {
+  font-size: .75rem;
+  padding: .2rem .45rem;
+  border-radius: 999px;
+  background: #173244;
+  color: #cde7f2;
+  border: 1px solid #2b556b;
+}
+
+/* --- Loader & Buttons --- */
+.loader {
+  margin-top: .75rem;
+}
+
+/* --- No Results Hinweis über dem Load More Button --- */
+.load-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2rem 0;
+}
+
+.no-results {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #9fbac4;
+  transition: opacity 0.3s ease;
+}
+
+.no-results strong {
+  color: var(--accent);
+}
+
+.no-results.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+#loadMoreBtn {
+  padding: .75rem 1rem;
+  border-radius: .8rem;
+  border: 1px solid #2b556b;
+  background: #16313e;
+  color: var(--text);
+  cursor: pointer;
+}
+
+#loadMoreBtn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* --- Hidden-Klasse (entscheidend für dein Problem!) --- */
+.hidden {
+  display: none !important;
+}
+#searchInput:focus {
+  outline: 2px solid var(--accent);
+}

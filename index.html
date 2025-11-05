@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokedex</title>
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="assets/favicon/site.webmanifest">
+  <link rel="shortcut icon" href="assets/favicon/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/cards.css" />
+  <link rel="stylesheet" href="css/modal.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <img src="assets/logo/pokedexbild.png" alt="Pokedex Logo" class="logo" />
+      <h1>Pokedex</h1>
+    </div>
+
+    <form class="search" id="searchForm">
+      <input id="searchInput" type="search" placeholder="Search Pokemon…" />
+    </form>
+  </header>
+
+  <main class="container">
+    <section id="grid" class="grid"></section>
+
+    <div class="load-more">
+  <p id="noResults" class="no-results hidden"></p>
+  <button id="loadMoreBtn">Load more</button>
+  <div id="loader" class="loader hidden">Loading…</div>
+</div>
+
+  </main>
+
+  <!-- Modal / Overlay -->
+<div id="overlay" class="overlay hidden">
+    <button id="prevBtn" class="nav prev">‹</button>
+    <div class="modal">
+    <div id="modalContent"></div>
+    <button id="nextBtn" class="nav next">›</button>
+    <button id="closeBtn" class="close">×</button>
+  </div>
+</div>
+
+
+ <!-- JavaScript Dateien in der richtigen Reihenfolge -->
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/app.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
