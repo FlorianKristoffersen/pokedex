@@ -1,2 +1,11 @@
+// Startpunkt der App 
+
 console.log("✅ Script.js wurde geladen!");
-init(); // einfach den App-Start ausführen
+
+
+// init() existiert und startet die App
+if (typeof init === "function") {
+  init();
+} else {
+  console.error("❌ init() wurde nicht gefunden!");
+}

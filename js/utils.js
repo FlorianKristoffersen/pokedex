@@ -1,6 +1,3 @@
-// utils.js
-// Kleine, wiederverwendbare Funktionen
-
 function toTitle(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

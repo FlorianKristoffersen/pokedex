@@ -17,211 +17,37 @@
   position: relative;
   box-shadow:
     0 10px 25px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(255, 255, 255, 0.05) inset; /* sanfter innerer Glanz */
+    0 0 30px rgba(255, 255, 255, 0.05) inset;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: popUpModal 0.4s ease forwards;
 }
-
 
 .modal .hero {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1.5rem;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
 }
 
 .modal img {
   width: 180px;
   height: 180px;
   object-fit: contain;
-}
-
-.modal .content {
-  padding: 1rem 1.5rem;
-}
-
-.modal h2 {
-  margin-top: 0;
-}
-
-.modal .stats {
-  border-top: 1px solid #204559;
-  margin-top: 1rem;
-  padding-top: 1rem;
-}
-
-.modal .row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.25rem 0;
-}
-
-.close, .nav {
-  position: absolute;
-  top: 0.5rem;
-  background: transparent;
-  border: none;
-  color: #eaf3f7;
-  font-size: 1.8rem;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.close:hover,
-.nav:hover {
-  color: #2dd4bf;
-}
-
-.close {
-  right: 0.75rem;
-}
-
-.nav.prev {
-  left: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.nav.next {
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-/* --- Fade-In / Fade-Out Animation --- */
-
-@keyframes fadeInOverlay {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOutOverlay {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-/* --- Schwebe-Animation für Pokémon-Bild --- */
-@keyframes floatImage {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-.modal .card__img {
-  position: relative; /* <--- neu! wichtig */
-  display: inline-block; /* <--- neu! damit das ::after funktioniert */
   animation: floatImage 3s ease-in-out infinite;
   filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
   transition: transform 0.2s ease;
 }
 
-
-.modal .card__img:hover {
+.modal img:hover {
   transform: scale(1.05);
 }
 
-
-@keyframes scaleUpModal {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes scaleDownModal {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-/* --- Fade / Scale Animationen ... (dein bisheriger Code) --- */
-
-/* --- Schwebe-Animation für Pokémon-Bild --- */
 @keyframes floatImage {
   0% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
   100% { transform: translateY(0); }
-}
-
-.modal .card__img {
-  animation: floatImage 3s ease-in-out infinite;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
-  transition: transform 0.2s ease;
-}
-
-.modal .card__img:hover {
-  transform: scale(1.05);
-}
-
-/* --- Optional: Glanz-Effekt (subtil!) --- */
-.modal .card__img::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-   background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.35) 50%, /* war 0.2 – jetzt etwas heller */
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: skewX(-25deg);
-  animation: shine 4s ease-in-out infinite;
-}
-
-@keyframes shine {
-  0% { left: -75%; }
-  50% { left: 125%; }
-  100% { left: 125%; }
-}
-
-
-/* Standard-Start (versteckt) */
-.overlay.hidden {
-  display: none;
-  opacity: 0;
-}
-
-/* Wenn sichtbar → Fade-In Effekt */
-.overlay.show {
-  display: grid;
-  animation: fadeInOverlay 0.25s ease forwards;
-}
-
-.overlay.hide {
-  animation: fadeOutOverlay 0.25s ease forwards;
-}
-
-.modal {
-  animation: scaleUpModal 0.25s ease forwards;
-}
-
-/* --- Glanz-Effekt NUR über das Pokémon-Bild --- */
-/* --- Glanz-Effekt über gesamten Hero-Bereich --- */
-.hero {
-  position: relative;
-  overflow: hidden; /* hält den Glanz-Effekt innerhalb des Bereichs */
 }
 
 .hero::after {
@@ -234,35 +60,135 @@
   background: linear-gradient(
     120deg,
     rgba(255, 255, 255, 0) 0%,
-    var(--shine-color, rgba(255, 255, 255, 0.4)) 50%, /* dynamische Farbe */
+    rgba(255, 255, 255, 0.4) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   transform: skewX(-25deg);
   pointer-events: none;
   animation: heroShine 4.5s ease-in-out infinite;
-  mix-blend-mode: screen; /* sorgt für leuchtenden Effekt */
+  mix-blend-mode: screen;
 }
-
 
 @keyframes heroShine {
-  0% {
-    left: -100%;
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  50% {
-    left: 120%;   /* wandert komplett durch */
-    opacity: 1;
-  }
-  100% {
-    left: 120%;
-    opacity: 0;
-  }
+  0% { left: -100%; opacity: 0; }
+  10% { opacity: 1; }
+  50% { left: 120%; opacity: 1; }
+  100% { left: 120%; opacity: 0; }
 }
 
-/* --- Öffnungs-Animation für Modal-Karte --- */
+.modal .content {
+  padding: 16px 24px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+}
+
+.pokemon-name {
+  flex: 1;
+  text-align: center;
+  font-size: 26px;
+  color: var(--accent);
+  font-weight: 700;
+  margin: 0;
+}
+
+
+.modal-header .nav {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #eaf3f7;
+  font-size: 28px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.modal-header .nav:hover {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 0 15px var(--accent);
+}
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #eaf3f7;
+  font-size: 28px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  z-index: 5;
+}
+
+
+.stats {
+  border-top: 1px solid #204559;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+
+.details {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 24px;
+  padding-top: 16px;
+  font-size: 15px;
+  color: #d7e3e8;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.detail-row strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.detail-row span {
+  text-align: right;
+}
+
+
+.overlay.hidden {
+  display: none;
+  opacity: 0;
+}
+
+.overlay.show {
+  display: grid;
+  animation: fadeInOverlay 0.25s ease forwards;
+}
+
+.overlay.hide {
+  animation: fadeOutOverlay 0.25s ease forwards;
+}
+
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOutOverlay {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+
 @keyframes popUpModal {
   0% {
     opacity: 0;
@@ -276,8 +202,4 @@
       0 10px 25px rgba(0, 0, 0, 0.4),
       0 0 30px rgba(255, 255, 255, 0.05) inset;
   }
-}
-
-.modal {
-  animation: popUpModal 0.4s ease forwards;
 }

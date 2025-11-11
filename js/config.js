@@ -1,4 +1,3 @@
-// config.js
 const CONFIG = {
   API_BASE: "https://pokeapi.co/api/v2",
   LIMIT: 40,
