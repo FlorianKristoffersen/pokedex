@@ -22,25 +22,33 @@ function bindOverlayClose() {
   });
 }
 
-function bindLiveSearch() {
-  let searchTimeout;
+function handleSearchInput(e) {
+  const query = e.target.value.trim().toLowerCase();
+  clearTimeout(searchTimeout);
 
-  searchInput.addEventListener("input", async (e) => {
-    const query = e.target.value.trim().toLowerCase();
-    if (query === "") {
-      await resetSearchToAllPokemon();
-      return;
-    }
-    if (query.length < 3) {
-      resetToDefaultState();
-      return;
-    }
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      searchPokemonByName(query);
-    }, 400);
-  });
+  if (query === "") return resetToDefaultState();
+  if (query.length < 3) return;
+
+  debounceSearch(query);
 }
+
+function debounceSearch(query) {
+  searchTimeout = setTimeout(() => validateSearchBeforeRun(query), 400);
+}
+
+function validateSearchBeforeRun(query) {
+  const current = searchInput.value.trim().toLowerCase();
+  if (current === "") return resetToDefaultState();
+  searchPokemonByName(query);
+}
+
+
+function bindLiveSearch() {
+  searchInput.addEventListener("input", handleSearchInput);
+}
+
+let searchTimeout; 
+
 
 function bindSearchSubmit() {
   searchForm.addEventListener("submit", e => {
