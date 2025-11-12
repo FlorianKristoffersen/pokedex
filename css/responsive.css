@@ -158,3 +158,96 @@
     right: 24px;
   }
 }
+
+
+
+@media (max-width: 600px) {
+  .modal {
+    width: 95%;
+    max-width: 350px;
+    max-height: 90vh; 
+    border-radius: 12px;
+    overflow-y: auto; 
+  }
+
+  .modal .hero img {
+    width: 180px;
+    height: 180px;
+  }
+
+  .modal .content {
+    padding: 12px;
+  }
+
+  .pokemon-name {
+    font-size: 18px;
+  }
+
+  .modal-header .nav {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .detail-row {
+    font-size: 14px;
+  }
+
+  .close {
+    font-size: 24px;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+@media (max-width: 380px) {
+  .modal {
+    max-width: 300px;
+
+  }
+
+  .modal .hero img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .pokemon-name {
+    font-size: 16px;
+  }
+
+  .detail-row {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 1000px) and (max-width: 1300px) and (max-height: 850px) {
+  .modal {
+    max-width: 480px;        
+    max-height: 80vh;        
+    border-radius: 12px;
+    overflow-y: auto;
+  }
+
+  .modal .hero img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .pokemon-name {
+    font-size: 18px;
+  }
+
+  .detail-row {
+    font-size: 14px;
+  }
+
+  .modal-header .nav {
+    width: 40px;
+    height: 40px;
+    font-size: 1.6rem;
+  }
+}
