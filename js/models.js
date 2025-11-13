@@ -1,41 +1,55 @@
 function buildPokemonModel(pokemon, index) {
+  if (!isValidPokemon(pokemon)) return null;
+
+  return {
+    id: pokemon.id || 0,
+    name: formatPokemonName(pokemon),
+    image: extractPokemonImage(pokemon),
+    types: extractPokemonTypes(pokemon),
+    bg: computePokemonBackground(pokemon),
+    index
+  };
+}
+
+function isValidPokemon(pokemon) {
   if (!pokemon) {
     console.error("❌ Ungültiges Pokémon übergeben:", pokemon);
-    return null;
+    return false;
   }
+  return true;
+}
 
-  const name = toTitle(pokemon.name || "Unknown");
+function formatPokemonName(pokemon) {
+  return toTitle(pokemon.name || "Unknown");
+}
 
-  const image =
+function extractPokemonImage(pokemon) {
+  return (
     pokemon.image ||
     pokemon.sprites?.other?.["official-artwork"]?.front_default ||
     pokemon.sprites?.front_default ||
-    "assets/fallback.png";
+    "assets/fallback.png"
+  );
+}
 
-  // 🟢 FIX: types können Strings ODER API-Objekte sein
-  const rawTypes = Array.isArray(pokemon.types) ? pokemon.types : [];
+function extractPokemonTypes(pokemon) {
+  const raw = Array.isArray(pokemon.types) ? pokemon.types : [];
 
-  const types = rawTypes.map(t =>
+  return raw.map(t =>
     typeof t === "string"
       ? toTitle(t)
       : toTitle(t.type?.name || "Unknown")
   );
+}
 
-  // 🟢 FIX: colorByType braucht API-Format
-  const normalizedTypes = rawTypes.map(t =>
+function computePokemonBackground(pokemon) {
+  const raw = Array.isArray(pokemon.types) ? pokemon.types : [];
+
+  const normalized = raw.map(t =>
     typeof t === "string"
       ? { type: { name: t.toLowerCase() } }
       : t
   );
 
-  const bg = colorByType(normalizedTypes, CONFIG.TYPE_COLORS);
-
-  return {
-    id: pokemon.id || 0,
-    name,
-    image,
-    types,
-    bg,
-    index
-  };
+  return colorByType(normalized, CONFIG.TYPE_COLORS);
 }

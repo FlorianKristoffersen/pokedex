@@ -12,29 +12,51 @@ async function fetchAllPokemonNames() {
 let isSearching = false;
 
 async function searchPokemonByName(query) {
-
-  if (isSearching) return;   // <<--- verhindert Doppelstart
+  if (isSearching) return;
   isSearching = true;
 
+  prepareSearchUI();
+
+  const matches = await findMatchingPokemon(query);
+  if (matches.length === 0) {
+    showEmptySearchResult(query);
+    isSearching = false;
+    return;
+  }
+
+  const pokemonDetails = await loadMatchingPokemonDetails(matches);
+  updateListingWithResults(pokemonDetails);
+  renderCards(listing);
+
+  isSearching = false;
+}
+
+function prepareSearchUI() {
   const noResults = document.querySelector("#noResults");
   const loadMore = document.querySelector(".load-more");
   const footer = document.querySelector("footer");
 
   resetSearchUI(noResults, loadMore, footer);
-
-  const list = await fetchAllPokemonNames();
-  const matches = list
-    .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
-    .slice(0, 1000);
-
-  if (matches.length === 0) {
-    showNoResults(query, noResults, loadMore, footer);
-    isSearching = false;     
-    return;
-  }
-
   showResultsUI(noResults, loadMore, footer);
+}
 
+async function findMatchingPokemon(query) {
+  const list = await fetchAllPokemonNames();
+
+  return list
+    .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
+    .slice(0, 1000); 
+}
+
+function showEmptySearchResult(query) {
+  const noResults = document.querySelector("#noResults");
+  const loadMore = document.querySelector(".load-more");
+  const footer = document.querySelector("footer");
+
+  showNoResults(query, noResults, loadMore, footer);
+}
+
+async function loadMatchingPokemonDetails(matches) {
   const details = await Promise.all(
     matches.map(async p => {
       try {
@@ -46,17 +68,16 @@ async function searchPokemonByName(query) {
     })
   );
 
-  const validDetails = details.filter(d => d !== null);
+  return details.filter(d => d !== null);
+}
 
-  listing = validDetails.map((p, i) => ({
+function updateListingWithResults(pokemonDetails) {
+  listing = pokemonDetails.map((p, i) => ({
     ...p,
     index: i
   }));
-
-  renderCards(listing);
-
-  isSearching = false;      
 }
+
 
 
 function resetSearchUI(noResults, loadMore, footer) {

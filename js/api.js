@@ -20,24 +20,30 @@ async function fetchPokemonList(limit, offset) {
   return res.json();
 }
 
-async function fetchPokemonDetails(url) {
-  const res = await fetch(url);
-  const data = await res.json();
+function parsePokemonTypes(data) {
+  return data.types.map(t => toTitle(t.type.name));
+}
 
+function parsePokemonStats(data) {
+  return data.stats.map(s => ({
+    label: s.stat.name.replace("special-", "Sp. "),
+    value: s.base_stat
+  }));
+}
+
+function parsePokemonBasicInfo(data) {
   return {
     id: data.id,
     name: toTitle(data.name),
     image:
       data.sprites.other["official-artwork"].front_default ||
       data.sprites.front_default,
-    types: data.types.map(t => toTitle(t.type.name)),
-    bg: colorByType(data.types, CONFIG.TYPE_COLORS),
+    bg: colorByType(data.types, CONFIG.TYPE_COLORS)
+  };
+}
 
-    stats: data.stats.map(s => ({
-      label: s.stat.name.replace("special-", "Sp. "),
-      value: s.base_stat
-    })),
-
+function parsePokemonPhysicalData(data) {
+  return {
     height: (data.height / 10).toFixed(1),
     weight: (data.weight / 10).toFixed(1),
     abilities: data.abilities
@@ -45,6 +51,19 @@ async function fetchPokemonDetails(url) {
       .join(", ")
   };
 }
+
+async function fetchPokemonDetails(url) {
+  const res = await fetch(url);
+  const data = await res.json();
+
+  return {
+    ...parsePokemonBasicInfo(data),
+    types: parsePokemonTypes(data),
+    stats: parsePokemonStats(data),
+    ...parsePokemonPhysicalData(data)
+  };
+}
+
 
 async function fetchPokemonStats(id) {
   const data = await fetchPokemonData(id);
@@ -114,7 +133,6 @@ async function fetchEvolutionChain(id) {
     const names = extractEvolutionNames(evoData);
     return formatEvolutionNames(names);
   } catch (err) {
-    console.warn("⚠️ Evolution unavailable for ID:", id);
     return "No evolution"; 
   }
 }
@@ -130,7 +148,6 @@ async function fetchAllPokemonList() {
   const id = Number(parts[parts.length - 1]);
   return id > 0 && id < 10000; 
 });
-
 
   return allPokemonList;
 }

@@ -21,28 +21,43 @@ function bindOverlayClose() {
     if (e.target === overlay) closeModal();
   });
 }
-
 function handleSearchInput(e) {
-  const query = e.target.value.trim().toLowerCase();
+  const query = normalizeQuery(e.target.value);
   clearTimeout(searchTimeout);
 
-  if (query === "") {
-    resetToDefaultState();
-    return;
-  }
+  if (isQueryEmpty(query)) return resetToDefaultState();
+  if (isQueryTooShort(query)) return;
 
-  if (query.length < 3) return;
+  debounceSearch(query);
+}
 
+function normalizeQuery(value) {
+  return value.trim().toLowerCase();
+}
+
+function isQueryEmpty(query) {
+  return query.length === 0;
+}
+
+function isQueryTooShort(query) {
+  return query.length < 3;
+}
+
+function debounceSearch(query) {
   searchTimeout = setTimeout(() => {
- 
-    const current = searchInput.value.trim().toLowerCase();
-    if (current.length >= 3) {
-      searchPokemonByName(current);
-    } else if (current === "") {
-      resetToDefaultState();
-    }
+    validateSearch(query);
   }, 400);
 }
+
+function validateSearch(query) {
+  const current = normalizeQuery(searchInput.value);
+
+  if (isQueryEmpty(current)) return resetToDefaultState();
+  if (isQueryTooShort(current)) return;
+
+  searchPokemonByName(current);
+}
+
 
 
 function debounceSearch(query) {
@@ -61,7 +76,6 @@ function bindLiveSearch() {
 }
 
 let searchTimeout; 
-
 
 function bindSearchSubmit() {
   searchForm.addEventListener("submit", e => {

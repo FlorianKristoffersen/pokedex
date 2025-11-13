@@ -16,22 +16,31 @@ async function loadPokemonBatch() {
   setLoading(true);
   try {
     const listData = await fetchPokemonList(CONFIG.LIMIT, offset);
-    const details = await Promise.all(
-  listData.results.map((p, i) => fetchPokemonDetails(p.url))
-);
-
-details.forEach((p, i) => p.index = listing.length + i);
-
-listing = [...listing, ...details];
-renderCards(details);
-
+    const details = await loadPokemonDetailsBatch(listData.results);
+    appendPokemonToListing(details);
+    renderCards(details);
     offset += CONFIG.LIMIT;
   } catch (err) {
     console.error("Error loading Pokémon:", err);
   } finally {
     setLoading(false);
   }
+}
 
+async function loadPokemonDetailsBatch(results) {
+  return Promise.all(
+    results.map(async (p, i) => {
+      const details = await fetchPokemonDetails(p.url);
+      return { ...details }; // saubere Kopie
+    })
+  );
+}
+
+function appendPokemonToListing(details) {
+  details.forEach((p, i) => {
+    p.index = listing.length + i;
+  });
+  listing = [...listing, ...details];
 }
 
 function renderCards(pokemonList) {
