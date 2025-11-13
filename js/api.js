@@ -1,6 +1,8 @@
 const pokemonDataCache = {};
 
 async function fetchPokemonData(id) {
+  if (id >= 10000) throw new Error("Form Pokémon ignored (ID > 10000)");
+
   if (pokemonDataCache[id]) return pokemonDataCache[id];
 
   const res = await fetch(`${CONFIG.API_BASE}/pokemon/${id}`);
@@ -25,7 +27,9 @@ async function fetchPokemonDetails(url) {
   return {
     id: data.id,
     name: toTitle(data.name),
-    image: data.sprites.other["official-artwork"].front_default || data.sprites.front_default,
+    image:
+      data.sprites.other["official-artwork"].front_default ||
+      data.sprites.front_default,
     types: data.types.map(t => toTitle(t.type.name)),
     bg: colorByType(data.types, CONFIG.TYPE_COLORS),
 
@@ -36,10 +40,11 @@ async function fetchPokemonDetails(url) {
 
     height: (data.height / 10).toFixed(1),
     weight: (data.weight / 10).toFixed(1),
-    abilities: data.abilities.map(a => a.ability.name.replace(/-/g, " ")).join(", "),
+    abilities: data.abilities
+      .map(a => a.ability.name.replace(/-/g, " "))
+      .join(", ")
   };
 }
-
 
 async function fetchPokemonStats(id) {
   const data = await fetchPokemonData(id);
@@ -72,6 +77,8 @@ async function fetchPokemonDetailsExtended(id) {
 }
 
 async function fetchSpeciesData(id) {
+  if (id >= 10000) throw new Error("No species for form Pokémon");
+
   const res = await fetch(`${CONFIG.API_BASE}/pokemon-species/${id}`);
   if (!res.ok) throw new Error("Failed to fetch species");
   return res.json();
@@ -101,8 +108,29 @@ function formatEvolutionNames(names) {
 }
 
 async function fetchEvolutionChain(id) {
-  const species = await fetchSpeciesData(id);
-  const evoData = await fetchEvolutionData(species.evolution_chain.url);
-  const names = extractEvolutionNames(evoData);
-  return formatEvolutionNames(names);
+  try {
+    const species = await fetchSpeciesData(id);
+    const evoData = await fetchEvolutionData(species.evolution_chain.url);
+    const names = extractEvolutionNames(evoData);
+    return formatEvolutionNames(names);
+  } catch (err) {
+    console.warn("⚠️ Evolution unavailable for ID:", id);
+    return "No evolution"; 
+  }
+}
+
+async function fetchAllPokemonList() {
+  if (allPokemonList) return allPokemonList;
+
+  const res = await fetch(`${CONFIG.API_BASE}/pokemon?limit=1025`);
+  const data = await res.json();
+
+  allPokemonList = data.results.filter(p => {
+  const parts = p.url.split("/").filter(Boolean);
+  const id = Number(parts[parts.length - 1]);
+  return id > 0 && id < 10000; 
+});
+
+
+  return allPokemonList;
 }

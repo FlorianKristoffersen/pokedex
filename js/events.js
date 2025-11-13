@@ -26,11 +26,24 @@ function handleSearchInput(e) {
   const query = e.target.value.trim().toLowerCase();
   clearTimeout(searchTimeout);
 
-  if (query === "") return resetToDefaultState();
+  if (query === "") {
+    resetToDefaultState();
+    return;
+  }
+
   if (query.length < 3) return;
 
-  debounceSearch(query);
+  searchTimeout = setTimeout(() => {
+ 
+    const current = searchInput.value.trim().toLowerCase();
+    if (current.length >= 3) {
+      searchPokemonByName(current);
+    } else if (current === "") {
+      resetToDefaultState();
+    }
+  }, 400);
 }
+
 
 function debounceSearch(query) {
   searchTimeout = setTimeout(() => validateSearchBeforeRun(query), 400);
