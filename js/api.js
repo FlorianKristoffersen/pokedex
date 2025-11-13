@@ -1,3 +1,16 @@
+const pokemonDataCache = {};
+
+async function fetchPokemonData(id) {
+  if (pokemonDataCache[id]) return pokemonDataCache[id];
+
+  const res = await fetch(`${CONFIG.API_BASE}/pokemon/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch Pokémon data");
+
+  const data = await res.json();
+  pokemonDataCache[id] = data;
+  return data;
+}
+
 async function fetchPokemonList(limit, offset) {
   const url = `${CONFIG.API_BASE}/pokemon?limit=${limit}&offset=${offset}`;
   const res = await fetch(url);
@@ -7,14 +20,30 @@ async function fetchPokemonList(limit, offset) {
 
 async function fetchPokemonDetails(url) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error("Failed to fetch Pokémon details");
-  return res.json();
+  const data = await res.json();
+
+  return {
+    id: data.id,
+    name: toTitle(data.name),
+    image: data.sprites.other["official-artwork"].front_default || data.sprites.front_default,
+    types: data.types.map(t => toTitle(t.type.name)),
+    bg: colorByType(data.types, CONFIG.TYPE_COLORS),
+
+    stats: data.stats.map(s => ({
+      label: s.stat.name.replace("special-", "Sp. "),
+      value: s.base_stat
+    })),
+
+    height: (data.height / 10).toFixed(1),
+    weight: (data.weight / 10).toFixed(1),
+    abilities: data.abilities.map(a => a.ability.name.replace(/-/g, " ")).join(", "),
+  };
 }
 
+
 async function fetchPokemonStats(id) {
-  const res = await fetch(`${CONFIG.API_BASE}/pokemon/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch Pokémon stats");
-  const data = await res.json();
+  const data = await fetchPokemonData(id);
+
   const statMap = {
     hp: "HP",
     attack: "Attack",
@@ -23,6 +52,7 @@ async function fetchPokemonStats(id) {
     "special-defense": "Sp. Defense",
     speed: "Speed"
   };
+
   return data.stats.map(s => ({
     label: statMap[s.stat.name] || s.stat.name,
     value: s.base_stat
@@ -30,9 +60,7 @@ async function fetchPokemonStats(id) {
 }
 
 async function fetchPokemonDetailsExtended(id) {
-  const res = await fetch(`${CONFIG.API_BASE}/pokemon/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch Pokémon extended details");
-  const data = await res.json();
+  const data = await fetchPokemonData(id);
 
   return {
     height: (data.height / 10).toFixed(1),
@@ -42,11 +70,13 @@ async function fetchPokemonDetailsExtended(id) {
       .join(", ")
   };
 }
+
 async function fetchSpeciesData(id) {
   const res = await fetch(`${CONFIG.API_BASE}/pokemon-species/${id}`);
   if (!res.ok) throw new Error("Failed to fetch species");
   return res.json();
 }
+
 async function fetchEvolutionData(evoUrl) {
   const res = await fetch(evoUrl);
   if (!res.ok) throw new Error("Failed to fetch evolution chain");
@@ -61,7 +91,6 @@ function extractEvolutionNames(chainData) {
     names.push(current.species.name);
     current = current.evolves_to[0];
   }
-
   return names;
 }
 

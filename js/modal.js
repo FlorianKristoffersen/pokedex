@@ -1,26 +1,39 @@
-// Öffnet das Modal
+let isModalLoading = false;
+let modalNavBound = false;
+
 async function openModal(index) {
+  if (isModalLoading) return;      
+  isModalLoading = true;
+
   activeIndex = index;
   const pokemon = listing[index];
-
 
   try {
     const details = await loadPokemonDetails(pokemon);
     renderModal(details);
     showModal();
-    bindModalNavigation();
-    updateModalNavigationButtons(); // 🆕 <-- hier einfügen!
+    bindModalNavigationOnce();
   } catch (err) {
-    console.error("❌ Fehler beim Öffnen des Modals:", err);
+    console.error("Fehler beim Öffnen:", err);
   }
+
+  isModalLoading = false; 
 }
 
 async function loadPokemonDetails(pokemon) {
-  const stats = await fetchPokemonStats(pokemon.id);
-  const extras = await fetchPokemonDetailsExtended(pokemon.id);
-  const evolution = await fetchEvolutionChain(pokemon.id);
-  return { ...pokemon, stats, ...extras, evolution };
+  const id = pokemon.id;
+
+  if (pokemonCache[id]) {
+    return pokemonCache[id];
+  }
+  const evolution = await fetchEvolutionChain(id);
+
+  const fullData = { ...pokemon, evolution };
+  pokemonCache[id] = fullData;
+
+  return fullData;
 }
+
 
 function renderModal(pokemon) {
   modalContent.innerHTML = modalTemplate(pokemon);
@@ -31,14 +44,16 @@ function showModal() {
   document.body.style.overflow = "hidden";
 }
 
-function bindModalNavigation() {
-  const prevBtn = document.querySelector("#prevBtn");
-  const nextBtn = document.querySelector("#nextBtn");
-  const closeBtn = document.querySelector("#closeBtn");
+function bindModalNavigationOnce() {
+  if (modalNavBound) return;
 
-  if (prevBtn) prevBtn.addEventListener("click", prevPokemon);
-  if (nextBtn) nextBtn.addEventListener("click", nextPokemon);
-  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  document.addEventListener("click", e => {
+    if (e.target.id === "prevBtn") prevPokemon();
+    if (e.target.id === "nextBtn") nextPokemon();
+    if (e.target.id === "closeBtn") closeModal();
+  });
+
+  modalNavBound = true;
 }
 
 function updateModalNavigationButtons() {

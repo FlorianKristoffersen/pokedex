@@ -3,25 +3,22 @@ async function searchPokemonByName(query) {
   const loadMoreSection = document.querySelector(".load-more");
   const footer = document.querySelector("footer");
 
-  try {
-    setLoading(true);
-    resetSearchUI(noResultsEl, loadMoreSection, footer);
+  resetSearchUI(noResultsEl, loadMoreSection, footer);
 
-    const res = await fetch(`${CONFIG.API_BASE}/pokemon?limit=1000`);
-    const data = await res.json();
+  const matches = listing.filter(p =>
+    p.name.toLowerCase().includes(query.toLowerCase())
+  );
 
-    const matches = data.results.filter(p =>
-      p.name.includes(query.toLowerCase())
-    );
-
-    handleSearchResults(matches, query, noResultsEl, loadMoreSection, footer);
-  } catch (err) {
-    console.error("❌ Fehler bei der Suche:", err);
-    showSearchError(noResultsEl, loadMoreSection, footer);
-  } finally {
-    setLoading(false);
+  if (matches.length === 0) {
+    showNoResults(query, noResultsEl, loadMoreSection, footer);
+    return;
   }
+
+  hideNoResults(noResultsEl, loadMoreSection, footer);
+
+  renderCards(matches);
 }
+
 
 function resetSearchUI(noResultsEl, loadMoreSection, footer) {
   grid.innerHTML = "";
