@@ -2,7 +2,7 @@
 async function openModal(index) {
   activeIndex = index;
   const pokemon = listing[index];
-  console.log(`🔍 Öffne Modal für: ${pokemon.name} (${pokemon.id})`);
+
 
   try {
     const details = await loadPokemonDetails(pokemon);

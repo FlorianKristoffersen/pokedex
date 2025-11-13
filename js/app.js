@@ -46,7 +46,7 @@ function renderCards(pokemonList) {
 function init() {
   bindEvents();
   loadPokemonBatch();
-  console.log("✅ App wurde gestartet");
+
 }
 
 document.addEventListener("mousemove", e => {
